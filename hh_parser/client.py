@@ -1,5 +1,5 @@
 import aiohttp
-from typing import Optional, List, Tuple
+from typing import List, Tuple
 from bs4 import BeautifulSoup, Tag
 from hh_parser.resume import Resume
 
@@ -45,7 +45,7 @@ class HhClient:
                     experience=experience
                 )
 
-    def _parse_name(self, name: Tag | None) -> Tuple[Optional[str], Optional[str], Optional[str]]:
+    def _parse_name(self, name: Tag | None) -> Tuple[str | None, str | None, str | None]:
         if name is None:
             return None, None, None
 
@@ -58,7 +58,7 @@ class HhClient:
 
         return first_name, last_name, middle_name
 
-    def _parse_phone(self, phone: Tag | None) -> Optional[str]:
+    def _parse_phone(self, phone: Tag | None) -> str | None:
         try:
             return phone.span.text
         except AttributeError:
