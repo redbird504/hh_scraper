@@ -2,7 +2,7 @@ from pydantic import BaseModel
 
 
 class Education(BaseModel):
-    year: int
+    year: str
     university: str
 
     def __str__(self):
@@ -10,7 +10,7 @@ class Education(BaseModel):
 
 
 class WorkExperience(BaseModel):
-    year: int
+    year: str
     experience: str
 
     def __str__(self):

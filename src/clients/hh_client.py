@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup, Tag
-from clients.client import Client
-from clients.schemas import HhResume, Education, WorkExperience
+from .client import Client
+from .schemas import HhResume, Education, WorkExperience
 
 
 class HhClient:
@@ -91,7 +91,7 @@ class HhClient:
                     class_='bloko-column bloko-column_xs-4 bloko-column_s-2 bloko-column_m-2 bloko-column_l-2').text
                 experience = elem.find(
                     class_='bloko-column bloko-column_xs-4 bloko-column_s-6 bloko-column_m-7 bloko-column_l-10').text
-
+                
                 experiences.append(WorkExperience(year=year, experience=experience))
             except AttributeError:
                 pass

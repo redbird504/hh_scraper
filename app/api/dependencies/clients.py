@@ -1,7 +1,5 @@
-from clients.client import Client
-from clients.hh_client import HhClient
-
-__all__ = ('hh_client',)
+from app.clients.client import Client
+from app.clients.hh_client import HhClient
 
 headers = {
     "Content-Type": "application/json; charset=utf-8",
@@ -9,5 +7,8 @@ headers = {
 }
 
 client = Client(headers)
-
 hh_client = HhClient(client)
+
+
+def get_hh_client() -> HhClient:
+    return hh_client
