@@ -56,7 +56,8 @@ class CandidatesRepository(BaseRepository):
             raise EntityDoesNotExist(
                 f"Candidate with id {id} doesn't exist"
             )
-
+        
+        await self._session.commit()
         return CandidateForResponse(**candidate_updated.to_dict())
 
     async def delete_candidate(self, id: int) -> None:
@@ -72,5 +73,6 @@ class CandidatesRepository(BaseRepository):
             raise EntityDoesNotExist(
                 f"Candidate with id {id} doesn't exist"
             )
-
+            
+        await self._session.commit()
         return CandidateForResponse(**candidate.to_dict())
