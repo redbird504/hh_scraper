@@ -36,7 +36,7 @@ async def get_candidates(
 
 @router.post(
     "/",
-    response_model=CandidateInCreate,
+    response_model=CandidateForResponse,
     status_code=status.HTTP_201_CREATED,
 )
 async def create_candidate(

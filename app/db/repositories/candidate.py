@@ -17,7 +17,8 @@ class CandidatesRepository(BaseRepository):
     ) -> CandidateForResponse:
         new_candidate = Candidate(**candidate.dict())
         self._session.add(new_candidate)
-        return new_candidate
+        await self._session.commit()
+        return CandidateForResponse(**new_candidate.to_dict())
 
     async def get_candidate(self, id: int) -> CandidateForResponse:
         candidate = await self._session.get(Candidate, id)
