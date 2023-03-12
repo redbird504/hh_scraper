@@ -2,6 +2,7 @@ from bs4 import BeautifulSoup, Tag
 
 from app.clients.client import Client
 from app.schemas.clients import HhResume, Education, WorkExperience
+from typing import Optional
 
 
 class HhClient:
@@ -38,7 +39,7 @@ class HhClient:
             work_experience=experience
         )
 
-    def _get_name(self, name: Tag | None) -> tuple[str | None, str | None, str | None]:
+    def _get_name(self, name: Optional[Tag]) -> tuple[Optional[str], Optional[str], Optional[str]]:
         if name is None:
             return None, None, None
 
@@ -51,19 +52,19 @@ class HhClient:
 
         return first_name, last_name, middle_name
 
-    def _get_phone(self, phone: Tag | None) -> str | None:
+    def _get_phone(self, phone: Optional[Tag]) -> Optional[str]:
         try:
             return phone.span.text
         except AttributeError:
             return None
 
-    def _get_email(self, email: Tag | None) -> str | None:
+    def _get_email(self, email: Optional[Tag]) -> Optional[str]:
         try:
             return email.a.text
         except AttributeError:
             return None
 
-    def _get_education(self, education_tag: Tag | None) -> list[Education]:
+    def _get_education(self, education_tag: Optional[Tag]) -> list[Education]:
         if education_tag is None:
             return []
 
@@ -81,7 +82,7 @@ class HhClient:
 
         return educations
 
-    def _get_experience(self, experience_tag: Tag | None) -> list[WorkExperience]:
+    def _get_experience(self, experience_tag: Optional[Tag]) -> list[WorkExperience]:
         if experience_tag is None:
             return []
 
