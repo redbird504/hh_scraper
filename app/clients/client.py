@@ -18,4 +18,5 @@ class Client:
                 **request_params
                 }
             response = await client.request(method, url, **request_params)
+            response.raise_for_status()
             return response

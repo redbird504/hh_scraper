@@ -1,4 +1,6 @@
 from sqlalchemy import delete, select, update
+
+from app.db.errors import EntityDoesNotExist
 from app.db.models.candidate import Candidate
 from app.db.repositories.base import BaseRepository
 from app.schemas.candidates import (
@@ -15,10 +17,15 @@ class CandidatesRepository(BaseRepository):
     ) -> CandidateForResponse:
         new_candidate = Candidate(**candidate.dict())
         self._session.add(new_candidate)
-        return CandidateForResponse(**new_candidate.to_dict())
+        return new_candidate
 
-    async def get_candidate_by_id(self, id: int) -> CandidateForResponse:
+    async def get_candidate(self, id: int) -> CandidateForResponse:
         candidate = await self._session.get(Candidate, id)
+        if candidate is None:
+            raise EntityDoesNotExist(
+                f"Candidate with id {id} doesn't exist"
+            )
+
         return CandidateForResponse(**candidate.to_dict())
 
     async def get_candidates(self) -> list[CandidateForResponse]:
@@ -35,16 +42,34 @@ class CandidatesRepository(BaseRepository):
         id: int,
         candidate: CandidateInUpdate
     ) -> CandidateForResponse:
-        await self._session.execute(
-            update(Candidate)
-            .values(candidate.dict())
-            .where(Candidate.id == id)
-        )
-        obj = await self._session.get(Candidate, id)
-        return CandidateForResponse(**obj.to_dict())
+        candidate_updated = (
+            await self._session.scalar(
+                    update(Candidate).
+                    returning(Candidate).
+                    values(candidate.dict()).
+                    where(Candidate.id == id)
+                )
+            )
+
+        if not candidate_updated:
+            raise EntityDoesNotExist(
+                f"Candidate with id {id} doesn't exist"
+            )
+
+        return CandidateForResponse(**candidate_updated.to_dict())
 
     async def delete_candidate(self, id: int) -> None:
-        await self._session.execute(
-            delete(Candidate).
-            where(Candidate.id == id)
-        )
+        candidate = (
+            await self._session.scalar(
+                    delete(Candidate).
+                    returning(Candidate).
+                    where(Candidate.id == id)
+                )
+            )
+
+        if candidate is None:
+            raise EntityDoesNotExist(
+                f"Candidate with id {id} doesn't exist"
+            )
+
+        return CandidateForResponse(**candidate.to_dict())

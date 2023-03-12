@@ -1,9 +1,10 @@
-from fastapi import APIRouter, status, Depends
+from fastapi import APIRouter, status, Depends, HTTPException
+from httpx import HTTPError
 from app.api.dependencies.clients import get_hh_client
 
 from app.api.dependencies.db import get_repository
 from app.clients.hh_client import HhClient
-from app.clients.schemas import HhResume
+from app.schemas.clients import HhResume
 from app.db.repositories.candidate import CandidatesRepository
 from app.schemas.candidates import (
     CandidateInCreate,
@@ -70,7 +71,20 @@ async def load_candidate(
     url: CandidateUrl,
     hh_client: HhClient = Depends(get_hh_client)
 ):
-    return await hh_client.get_resume(url.url)
+    try:
+        result = await hh_client.get_resume(url.url)
+    except AttributeError:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Incorrect URL"
+        )
+
+    except HTTPError as exp:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail=str(exp)
+        )
+
+    return result
 
 
 @router.put(
