@@ -1,3 +1,4 @@
+from typing import Optional
 from pydantic import BaseModel
 
 
@@ -18,10 +19,10 @@ class WorkExperience(BaseModel):
 
 
 class HhResume(BaseModel):
-    first_name: str | None
-    last_name: str | None
-    middle_name: str | None
-    email: str | None
-    phone: str | None
+    first_name: Optional[str]
+    last_name: Optional[str]
+    middle_name: Optional[str]
+    email: Optional[str]
+    phone: Optional[str]
     education: list[Education]
     work_experience: list[WorkExperience]
